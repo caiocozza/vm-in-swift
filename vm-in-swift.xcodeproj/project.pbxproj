@@ -29,6 +29,7 @@
 		97C67CD222B52E32005D8534 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		97C67CD922B52FCC005D8534 /* core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = core.swift; sourceTree = "<group>"; };
 		97C67CDB22B530BC005D8534 /* instruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = instruction.swift; sourceTree = "<group>"; };
+		97C67CDD22B534CD005D8534 /* file.vminstr */ = {isa = PBXFileReference; lastKnownFileType = text; path = file.vminstr; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +65,7 @@
 				97C67CD222B52E32005D8534 /* main.swift */,
 				97C67CD922B52FCC005D8534 /* core.swift */,
 				97C67CDB22B530BC005D8534 /* instruction.swift */,
+				97C67CDD22B534CD005D8534 /* file.vminstr */,
 			);
 			path = "vm-in-swift";
 			sourceTree = "<group>";

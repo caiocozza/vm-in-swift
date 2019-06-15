@@ -9,11 +9,33 @@
 import Foundation
 
 class VirtualMachine {
-    init(file: String) {
-        self.file = file
+    init() {
         self.instructions = [Instruction]()
     }
     
-    private let file:String
+    func Setup(file: String) -> Void {
+        do {
+            let rawInstructions = try NSString(contentsOfFile: file, encoding: String.Encoding.utf8.rawValue)
+            
+            
+            for rawInstruction in rawInstructions.components(separatedBy: .newlines) {
+                self.instructions.append(try Instruction(command: rawInstruction))
+            }
+        }
+        catch let error as NSError {
+            //TODO:Proper Error handling
+            print("Error: \(error)")
+            exit(EXIT_FAILURE)
+        }
+        catch let error as InstructionError {
+            print("Instruction Error: \(error)")
+            exit(EXIT_FAILURE)
+        }
+    }
+    
+    func Execute() -> Void {
+        
+    }
+    
     private var instructions:[Instruction]
 }

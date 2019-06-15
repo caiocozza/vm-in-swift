@@ -9,7 +9,7 @@
 import Foundation
 
 func Init() -> Void {
-    VirtualMachine(file: "./file.vmistr")
+    VirtualMachine().Setup(file: "/Users/caiocozza/Code/swift/vm-in-swift/vm-in-swift/file.vminstr")
 }
 
 Init()
