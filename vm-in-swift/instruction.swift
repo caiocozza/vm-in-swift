@@ -8,42 +8,58 @@
 
 import Foundation
 
-class Opcode {
-    static func GetOpcode(stringOpcode:String) -> Int {
-        let x = Opcode.opcodes.first(where: {(arg0) -> Bool in
-            let (_, raw) = arg0
-            return raw == stringOpcode
-        })
-        
-        return x?.0 ?? 0
-    }
-    
-    static private let opcodes:[(Int, String)] = [
-        (1,"set"),
-        (2,"move")
-    ]
-}
-
-class GenericOpcode<T> {
-    init(function: T) {
-        self.function = function
-    }
-    
-    func Call(args:Any...) {
-        (self.function as! (Any...) -> ())(args)
-    }
-    
-    private let function: T
-}
-
 enum InstructionError : Error {
     case EmptyCommand
     case UndefinedOpcode
 }
 
+class GenericOpcode {
+    init(function:@escaping (Any...) -> Void) {
+        self.function = function
+    }
+    
+    func Call(args:Any...) {
+        self.function(args)
+    }
+    
+    private let function:(Any...) -> Void
+}
+
+class OpcodeInstruction {
+    init(opcode:GenericOpcode) {
+        self.opcode = opcode
+    }
+    
+    private let opcode:GenericOpcode
+    
+    static func GetOpcode(type:String) throws -> OpcodeInstruction {
+        let find = OpcodeInstruction.opcodeContainer.first(where: {(arg) -> Bool in
+            let (t,_) = arg
+            return t == type
+        })
+        
+        guard find != nil && find?.1 != nil else {
+            throw InstructionError.UndefinedOpcode
+        }
+        
+        return OpcodeInstruction(opcode: find!.1)
+    }
+    
+    static private let opcodeContainer:[(String, GenericOpcode)] = [
+        ("set", GenericOpcode(function: {(args:Any...) -> Void in
+            //TODO
+        })),
+        ("move", GenericOpcode(function: {(args:Any...) -> Void in
+            //TODO
+        })),
+        ("copy", GenericOpcode(function: {(args:Any...) -> Void in
+            //TODO
+        }))
+    ]
+}
+
 class Instruction {
     init(command:String) throws {
-        self.opcode = 1
         self.command = [String]()
         
         for commandItem in command.components(separatedBy: .whitespaces) {
@@ -56,15 +72,16 @@ class Instruction {
             throw InstructionError.EmptyCommand
         }
         
-        let opcode = Opcode.GetOpcode(stringOpcode: command[0])
+
+        let opcode = try? OpcodeInstruction.GetOpcode(type: command[0])
         
-        guard opcode > 0 else {
+        guard opcode != nil else {
             throw InstructionError.UndefinedOpcode
         }
         
-        self.opcode = opcode
+        self.opcodeInstruction = opcode
     }
     
-    private var opcode:Int
+    private var opcodeInstruction:OpcodeInstruction?
     private var command:[String]
 }
