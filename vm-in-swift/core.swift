@@ -21,20 +21,20 @@ class VirtualMachine {
             for rawInstruction in rawInstructions.components(separatedBy: .newlines) {
                 self.instructions.append(try Instruction(command: rawInstruction))
             }
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             //TODO:Proper Error handling
             print("Error: \(error)")
             exit(EXIT_FAILURE)
-        }
-        catch let error as InstructionError {
+        } catch let error as InstructionError {
             print("Instruction Error: \(error)")
             exit(EXIT_FAILURE)
         }
     }
     
     func Execute() -> Void {
-        
+        for instruction in self.instructions {
+
+        }
     }
     
     private var instructions:[Instruction]

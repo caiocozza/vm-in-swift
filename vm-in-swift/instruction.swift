@@ -14,6 +14,8 @@ enum InstructionError : Error {
 }
 
 class GenericOpcode {
+    private let function:(Any...) -> Void
+    
     init(function:@escaping (Any...) -> Void) {
         self.function = function
     }
@@ -21,16 +23,24 @@ class GenericOpcode {
     func Call(args:Any...) {
         self.function(args)
     }
-    
-    private let function:(Any...) -> Void
 }
 
 class OpcodeInstruction {
-    init(opcode:GenericOpcode) {
+    private let opcode:GenericOpcode
+    private let type:String
+    
+    init(type:String, opcode:GenericOpcode) {
+        self.type = type
         self.opcode = opcode
     }
     
-    private let opcode:GenericOpcode
+    func GetType() -> String {
+        return self.type
+    }
+    
+    func Execute(args: Any...) -> Void {
+        self.opcode.Call(args: args)
+    }
     
     static func GetOpcode(type:String) throws -> OpcodeInstruction {
         let find = OpcodeInstruction.opcodeContainer.first(where: {(arg) -> Bool in
@@ -42,7 +52,7 @@ class OpcodeInstruction {
             throw InstructionError.UndefinedOpcode
         }
         
-        return OpcodeInstruction(opcode: find!.1)
+        return OpcodeInstruction(type: type, opcode: find!.1)
     }
     
     static private let opcodeContainer:[(String, GenericOpcode)] = [
@@ -59,12 +69,31 @@ class OpcodeInstruction {
 }
 
 class Instruction {
+    private var opcodeInstruction:OpcodeInstruction?
+    private var command:[String]
+    
     init(command:String) throws {
         self.command = [String]()
         
         for commandItem in command.components(separatedBy: .whitespaces) {
             self.command.append(commandItem)
         }
+    }
+    
+    func Execute() throws -> Void {
+        do {
+            try self.DiscoverOpcode()
+            self.Evaluate()
+            
+        } catch let error as InstructionError {
+            //TODO:proper execution error and logging
+            print("Error: \(error)")
+            exit(EXIT_FAILURE)
+        }
+    }
+    
+    private func Evaluate() -> Void {
+
     }
     
     private func DiscoverOpcode() throws -> Void {
@@ -81,7 +110,4 @@ class Instruction {
         
         self.opcodeInstruction = opcode
     }
-    
-    private var opcodeInstruction:OpcodeInstruction?
-    private var command:[String]
 }
